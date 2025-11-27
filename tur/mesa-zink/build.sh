@@ -2,45 +2,54 @@ TERMUX_PKG_HOMEPAGE=https://www.mesa3d.org
 TERMUX_PKG_DESCRIPTION="An open-source implementation of the OpenGL specification"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_LICENSE_FILE="docs/license.rst"
-TERMUX_PKG_MAINTAINER="@termux-user-repository"
-TERMUX_PKG_VERSION=22.0.5
-TERMUX_PKG_REVISION=5
-TERMUX_PKG_SRCURL=https://github.com/WOOD6563/Baka/releases/download/Mesa/mesa-25.1.4.tar.xz
-TERMUX_PKG_SHA256=ffbbc6e1417805c9336cec8ed5b6bcce8eeddccae7476e829665b824ac442649
-TERMUX_PKG_DEPENDS="libandroid-shmem, libc++, libdrm, libexpat, libglvnd, libx11, libxext, libxfixes, libxshmfence, libxxf86vm, ncurses, vulkan-loader, xorg-xrandr, zlib, zstd"
-TERMUX_PKG_SUGGESTS="mesa-zink-dev"
-TERMUX_PKG_BUILD_DEPENDS="libllvm-11-static, libglvnd-dev, xorgproto, vulkan-headers"
-TERMUX_PKG_CONFLICTS="libmesa, ndk-sysroot (<< 23b-6), mesa"
-TERMUX_PKG_REPLACES="libmesa, mesa"
-TERMUX_PKG_PROVIDES="mesa"
+TERMUX_PKG_MAINTAINER="@termux"
+TERMUX_PKG_VERSION="25.1.4"
+_LLVM_MAJOR_VERSION=$(. $TERMUX_SCRIPTDIR/packages/libllvm/build.sh; echo "${LLVM_MAJOR_VERSION}")
+_LLVM_MAJOR_VERSION_NEXT=$((_LLVM_MAJOR_VERSION + 1))
+TERMUX_PKG_SRCURL=https://archive.mesa3d.org/mesa-${TERMUX_PKG_VERSION}.tar.xz
+TERMUX_PKG_SHA256=164872a5e792408aa72fecd52b7be6409724c4ad81700798675a7d801d976704
+TERMUX_PKG_AUTO_UPDATE=true
+TERMUX_PKG_DEPENDS="libandroid-shmem, libc++, libdrm, libglvnd, libllvm (<< ${_LLVM_MAJOR_VERSION_NEXT}), libwayland, libx11, libxext, libxfixes, libxshmfence, libxxf86vm, ncurses, vulkan-loader, zlib, zstd"
+TERMUX_PKG_SUGGESTS="mesa-dev"
+TERMUX_PKG_BUILD_DEPENDS="libwayland-protocols, libxrandr, llvm, llvm-tools, mlir, xorgproto"
+TERMUX_PKG_BREAKS="osmesa, osmesa-demos"
+TERMUX_PKG_CONFLICTS="libmesa, ndk-sysroot (<= 25b), osmesa"
+TERMUX_PKG_REPLACES="libmesa, osmesa"
 
+# FIXME: Set `shared-llvm` to disabled if possible
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
---cmake-prefix-path $TERMUX_PREFIX/opt/libllvm-11;$TERMUX_PREFIX
+--cmake-prefix-path $TERMUX_PREFIX
 -Dcpp_rtti=false
 -Dgbm=enabled
+-Dopengl=true
 -Degl=enabled
+-Degl-native-platform=x11
 -Dgles1=disabled
 -Dgles2=enabled
--Ddri3=enabled
--Dllvm=enabled
--Dshared-llvm=disabled
 -Dglx=dri
--Dplatforms=x11
--Ddri-drivers=
--Dgallium-drivers=swrast,zink,virgl
--Dvulkan-drivers=swrast,freedreno
--Dfreedreno-kgsl=true
--Dosmesa=true
--Dglvnd=true
+-Dllvm=enabled
+-Dshared-llvm=enabled
+-Dplatforms=x11,wayland
+-Dgallium-drivers=virgl,zink
+-Dglvnd=enabled
+-Dxmlconfig=disabled
 "
+
+termux_pkg_auto_update() {
+	read -r latest < <(curl -fsSL "https://archive.mesa3d.org/" | sed -rn 's/.*mesa-([0-9]+(\.[0-9]+)*).*/\1/p' | sort -Vr);
+	termux_pkg_upgrade_version "${latest}"
+}
+
+termux_step_post_get_source() {
+	# Do not use meson wrap projects
+	rm -rf subprojects
+}
 
 termux_step_pre_configure() {
 	termux_setup_cmake
-	termux_setup_meson
 
 	CPPFLAGS+=" -D__USE_GNU"
-	LDFLAGS+=" -landroid-shmem -ltinfo"
-	LDFLAGS+=" -Wl,--undefined-version"
+	LDFLAGS+=" -landroid-shmem"
 
 	_WRAPPER_BIN=$TERMUX_PKG_BUILDDIR/_wrapper/bin
 	mkdir -p $_WRAPPER_BIN
@@ -49,11 +58,17 @@ termux_step_pre_configure() {
 			$TERMUX_PKG_BUILDER_DIR/cmake-wrapper.in \
 			> $_WRAPPER_BIN/cmake
 		chmod 0700 $_WRAPPER_BIN/cmake
+		termux_setup_wayland_cross_pkg_config_wrapper
+		export LLVM_CONFIG="$TERMUX_PREFIX/bin/llvm-config"
 	fi
-	export PATH=$_WRAPPER_BIN:$PATH
+	export PATH="$_WRAPPER_BIN:$PATH"
 
-	# Revert this commit on meson as it breaks custom llvm
-	(cat $TERMUX_PKG_BUILDER_DIR/9999-meson-89146e84c9eab649d3847af101d61047cac45765.diff | patch -d $(dirname $TERMUX_MESON) -p1 -R) || true
+	local _vk_drivers="swrast"
+	if [ $TERMUX_ARCH = "arm" ] || [ $TERMUX_ARCH = "aarch64" ]; then
+		_vk_drivers+=",freedreno"
+		TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -Dfreedreno-kmds=msm,kgsl"
+	fi
+	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -Dvulkan-drivers=$_vk_drivers"
 }
 
 termux_step_post_configure() {
