@@ -14,7 +14,6 @@ TERMUX_PKG_CONFLICTS="libmesa, ndk-sysroot (<< 23b-6), mesa"
 TERMUX_PKG_REPLACES="libmesa, mesa"
 TERMUX_PKG_PROVIDES="mesa"
 
-# FIXME: Set `shared-llvm` to disabled if possible
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --cmake-prefix-path $TERMUX_PREFIX
 -Dcpp_rtti=true
@@ -26,8 +25,8 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dgles2=enabled
 -Dglx=dri
 -Dllvm=enabled
--Dshared-llvm=enabled
--Dplatforms=x11,wayland
+-Dshared-llvm=disabled
+-Dplatforms=x11
 -Dgallium-drivers=virgl,zink
 -Dglvnd=enabled
 -Dxmlconfig=disabled
