@@ -17,7 +17,7 @@ TERMUX_PKG_PROVIDES="mesa"
 # FIXME: Set `shared-llvm` to disabled if possible
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --cmake-prefix-path $TERMUX_PREFIX
--Dcpp_rtti=false
+-Dcpp_rtti=true
 -Dgbm=enabled
 -Dopengl=true
 -Degl=enabled
