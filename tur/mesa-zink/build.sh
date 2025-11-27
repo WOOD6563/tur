@@ -2,19 +2,17 @@ TERMUX_PKG_HOMEPAGE=https://www.mesa3d.org
 TERMUX_PKG_DESCRIPTION="An open-source implementation of the OpenGL specification"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_LICENSE_FILE="docs/license.rst"
-TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="25.1.4"
-_LLVM_MAJOR_VERSION=$(. $TERMUX_SCRIPTDIR/packages/libllvm/build.sh; echo "${LLVM_MAJOR_VERSION}")
-_LLVM_MAJOR_VERSION_NEXT=$((_LLVM_MAJOR_VERSION + 1))
-TERMUX_PKG_SRCURL=https://archive.mesa3d.org/mesa-${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=164872a5e792408aa72fecd52b7be6409724c4ad81700798675a7d801d976704
-TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="libandroid-shmem, libc++, libdrm, libglvnd, libllvm (<< ${_LLVM_MAJOR_VERSION_NEXT}), libwayland, libx11, libxext, libxfixes, libxshmfence, libxxf86vm, ncurses, vulkan-loader, zlib, zstd"
-TERMUX_PKG_SUGGESTS="mesa-dev"
-TERMUX_PKG_BUILD_DEPENDS="libwayland-protocols, libxrandr, llvm, llvm-tools, mlir, xorgproto"
-TERMUX_PKG_BREAKS="osmesa, osmesa-demos"
-TERMUX_PKG_CONFLICTS="libmesa, ndk-sysroot (<= 25b), osmesa"
-TERMUX_PKG_REPLACES="libmesa, osmesa"
+TERMUX_PKG_MAINTAINER="@termux-user-repository"
+TERMUX_PKG_VERSION=22.0.5
+TERMUX_PKG_REVISION=5
+TERMUX_PKG_SRCURL=https://github.com/WOOD6563/Baka/releases/download/Mesa/mesa-25.1.4.tar.xz
+TERMUX_PKG_SHA256=ffbbc6e1417805c9336cec8ed5b6bcce8eeddccae7476e829665b824ac442649
+TERMUX_PKG_DEPENDS="libandroid-shmem, libc++, libdrm, libexpat, libglvnd, libx11, libxext, libxfixes, libxshmfence, libxxf86vm, ncurses, vulkan-loader, xorg-xrandr, zlib, zstd"
+TERMUX_PKG_SUGGESTS="mesa-zink-dev"
+TERMUX_PKG_BUILD_DEPENDS="libllvm-11-static, libglvnd-dev, xorgproto, vulkan-headers"
+TERMUX_PKG_CONFLICTS="libmesa, ndk-sysroot (<< 23b-6), mesa"
+TERMUX_PKG_REPLACES="libmesa, mesa"
+TERMUX_PKG_PROVIDES="mesa"
 
 # FIXME: Set `shared-llvm` to disabled if possible
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
