@@ -24,11 +24,10 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dgles1=disabled
 -Dgles2=enabled
 -Dglx=dri
--Dllvm=disabled
+-Dllvm=enabled
 -Dshared-llvm=disabled
--Dgallium-swrast=false
 -Dplatforms=x11
--Dgallium-drivers=virgl,zink
+-Dgallium-drivers=swrast,virgl,zink
 -Dglvnd=enabled
 -Dxmlconfig=disabled
 "
