@@ -33,7 +33,6 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dgallium-nine=false
 -Dgallium-opencl=disabled
 -Dosmesa=false
-"Dglvnd=true
 "
 
 termux_step_pre_configure() {
