@@ -27,10 +27,13 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dcpp_rtti=true
 -Dplatforms=x11
 -Ddri-drivers=
--Dgallium-drivers=zink,virgl,panfrost
+-Dgallium-drivers=panfrost,zink
 -Dvulkan-drivers=panfrost
--Dosmesa=true
 -Dglvnd=true
+-Dgallium-nine=false
+-Dgallium-opencl=disabled
+-Dosmesa=false
+"Dglvnd=true
 "
 
 termux_step_pre_configure() {
