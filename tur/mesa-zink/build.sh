@@ -16,7 +16,6 @@ TERMUX_PKG_PROVIDES="mesa"
 
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --cmake-prefix-path $TERMUX_PREFIX/opt/libllvm-11;$TERMUX_PREFIX
--Dcpp_rtti=false
 -Dgbm=false
 -Degl=enabled
 -Dgles1=disabled
@@ -25,6 +24,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dllvm=enabled
 -Dshared-llvm=disabled
 -Dglx=dri
+-Dcpp_rtti=true
 -Dplatforms=x11
 -Ddri-drivers=
 -Dgallium-drivers=swrast,zink,virgl
