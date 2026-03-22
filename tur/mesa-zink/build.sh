@@ -17,7 +17,7 @@ TERMUX_PKG_PROVIDES="mesa"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --cmake-prefix-path $TERMUX_PREFIX/opt/libllvm-11;$TERMUX_PREFIX
 -Dcpp_rtti=false
--Dgbm=enabled
+-Dgbm=false
 -Degl=enabled
 -Dgles1=disabled
 -Dgles2=enabled
@@ -27,9 +27,8 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dglx=dri
 -Dplatforms=x11
 -Ddri-drivers=
--Dgallium-drivers=swrast,zink,virgl
--Dvulkan-drivers=swrast,freedreno
--Dfreedreno-kgsl=true
+-Dgallium-drivers=zink,virgl
+-Dvulkan-drivers=swrast
 -Dosmesa=true
 -Dglvnd=true
 "
