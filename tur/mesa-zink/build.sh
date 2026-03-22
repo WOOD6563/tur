@@ -27,8 +27,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dcpp_rtti=true
 -Dplatforms=x11
 -Ddri-drivers=
--Dgallium-drivers=swrast,zink,virgl
--Dvulkan-drivers=swrast
+-Dgallium-drivers=zink,virgl
 -Dosmesa=true
 -Dglvnd=true
 "
