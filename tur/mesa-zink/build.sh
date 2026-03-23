@@ -15,7 +15,7 @@ TERMUX_PKG_REPLACES="libmesa, mesa"
 TERMUX_PKG_PROVIDES="mesa"
 
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
---cmake-prefix-path $TERMUX_PREFIX/opt/libllvm-11;$TERMUX_PREFIX
+--cmake-prefix-path $TERMUX_PREFIX/opt/libllvm-17;$TERMUX_PREFIX
 -Dgbm=false
 -Degl=enabled
 -Dgles1=disabled
